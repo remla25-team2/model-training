@@ -4,6 +4,9 @@ on:
         tags:
             - 'v*.*.*'  
 
+env:
+  PYTHON_VERSION: '3.12.2'
+
 jobs:
     build:
         runs-on: ubuntu-24.04
@@ -11,10 +14,10 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4
 
-            - name: Set up Python 3.12.2
+            - name: Set up Python ${{ env.PYTHON_VERSION }}
               uses: actions/setup-python@v5
               with:
-                  python-version: 3.12.2
+                  python-version: ${{ env.PYTHON_VERSION }}
 
             - name: Install dependencies
               run: |
@@ -23,15 +26,13 @@ jobs:
                   pip install setuptools wheel twine
                 
             - name: Train and save model
-              run: |
-                python src/train.py ${{ github.ref_name }}
+              run: python src/train.py
 
-                    
             - name: Upload to GitHub Release
               uses: softprops/action-gh-release@v1
               with:
                 files: |
-                  models/${{ github.ref_name }}/*.pkl
+                  models/*.pkl
                   bow/*.pkl
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

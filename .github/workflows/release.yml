@@ -34,5 +34,3 @@ jobs:
                 files: |
                   models/SentimentModel.pkl
                   bow/c1_BoW_Sentiment_Model.pkl
-              env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

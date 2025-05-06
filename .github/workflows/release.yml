@@ -28,7 +28,7 @@ jobs:
 
                     
             - name: Upload to GitHub Release
-              uses: softprops/action-gh-release@v2
+              uses: softprops/action-gh-release@v1
               with:
                 files: |
                   models/${{ github.ref_name }}/*.pkl

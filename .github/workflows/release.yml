@@ -34,4 +34,4 @@ jobs:
                   models/${{ github.ref_name }}/*.pkl
                   bow/*.pkl
               env:
-                GITHUB_TOKEN: ${{ secrets.OP_TOKEN }}
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

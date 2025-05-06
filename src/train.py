@@ -9,7 +9,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import confusion_matrix, accuracy_score
-# from lib_ml import TextPreprocessor
+from lib_ml.preprocessing import _clean
 
 
 class SentimentAnalysisModel:
@@ -19,8 +19,9 @@ class SentimentAnalysisModel:
 
     def preprocess(self):
 
-        # preprocesser = TextPreprocessor()
-        # corpus = TextPreprocessor.process 
+        corpus = []
+        for i in range(0, 900):
+            corpus.append(_clean(self.dataset['Review'][i]))
 
         return corpus
     

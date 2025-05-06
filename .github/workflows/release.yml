@@ -1,0 +1,37 @@
+name: Release model-training
+on:
+    push:
+        tags:
+            - 'v*.*.*'  
+
+jobs:
+    build:
+        runs-on: ubuntu-24.04
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set up Python 3.12.2
+              uses: actions/setup-python@v5
+              with:
+                  python-version: 3.12.2
+
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install -r requirements.txt
+                  pip install setuptools wheel twine
+                
+            - name: Train and save model
+              run: |
+                python src/train.py ${{ github.ref_name }}
+
+                    
+            - name: Upload to GitHub Release
+              uses: softprops/action-gh-release@v2
+              with:
+                files: |
+                  models/${{ github.ref_name }}/*.pkl
+                  bow/*.pkl
+              env:
+                GITHUB_TOKEN: ${{ secrets.OP_TOKEN }}

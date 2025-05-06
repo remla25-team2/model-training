@@ -43,7 +43,7 @@ class SentimentAnalysisModel:
 
         return X_train, X_test, y_train, y_test
     
-    def train(self):
+    def train(self, X_train, X_test, y_train, y_test):
         classifier = GaussianNB()
         classifier.fit(X_train, y_train)
 

@@ -32,7 +32,7 @@ jobs:
               uses: softprops/action-gh-release@v1
               with:
                 files: |
-                  models/*.pkl
-                  bow/*.pkl
+                  models/SentimentModel.pkl
+                  bow/c1_BoW_Sentiment_Model.pkl
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

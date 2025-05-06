@@ -43,13 +43,13 @@ class SentimentAnalysisModel:
 
         return X_train, X_test, y_train, y_test
     
-    def train(self, version, X_train, X_test, y_train, y_test):
+    def train(self, X_train, X_test, y_train, y_test):
         classifier = GaussianNB()
         classifier.fit(X_train, y_train)
 
-        model_dir = os.path.join('models', version)
+        model_dir = os.path.join('models')
         os.makedirs(model_dir, exist_ok=True)
-        model_path = os.path.join(model_dir, "f{version}_SentimentModel.pkl")
+        model_path = os.path.join(model_dir, "SentimentModel.pkl")
         joblib.dump(classifier, model_path)
         
         
@@ -62,14 +62,13 @@ class SentimentAnalysisModel:
 
 
 if __name__ == "__main__":
-    model_version = sys.argv[1]
     sentiment = SentimentAnalysisModel(dataset_path = 'data/a1_RestaurantReviews_HistoricDump.tsv')
     corpus = sentiment.preprocess()
     x, y = sentiment.transform(corpus)
 
     X_train, X_test, y_train, y_test = sentiment.splitdata(x, y)
 
-    sentiment.train(model_version, X_train, X_test, y_train, y_test)
+    sentiment.train(X_train, X_test, y_train, y_test)
 
 
 

@@ -14,7 +14,8 @@ PYTHON_INTERPRETER = python
 ## Install Python dependencies
 .PHONY: requirements
 requirements:
-	pip install -e .
+	pip install flit
+	flit install --pth-file
 	
 
 

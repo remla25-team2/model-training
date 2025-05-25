@@ -1,17 +1,20 @@
+from pathlib import Path
+
+from loguru import logger
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from pathlib import Path
-from loguru import logger
 import typer
+
 from training.config import PROCESSED_DATA_DIR
 
 app = typer.Typer()
+
 
 @app.command()
 def split(
     dataset_path: Path = PROCESSED_DATA_DIR / "features.csv",
     labels_path: Path = PROCESSED_DATA_DIR / "labels.csv",
-    output_dir: Path = PROCESSED_DATA_DIR / "splits"
+    output_dir: Path = PROCESSED_DATA_DIR / "splits",
 ):
     logger.info("Loading features and labels...")
     X = pd.read_csv(dataset_path).values
@@ -27,6 +30,7 @@ def split(
     pd.Series(y_test).to_csv(output_dir / "y_test.csv", index=False)
 
     logger.info(f"Saved split datasets to {output_dir}")
+
 
 if __name__ == "__main__":
     app()

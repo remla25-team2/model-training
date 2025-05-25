@@ -1,12 +1,15 @@
+from pathlib import Path
 import pickle
+
+from loguru import logger
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
-from pathlib import Path
-from loguru import logger
 import typer
-from training.config import PROCESSED_DATA_DIR, MODELS_DIR, DATA_DIR
+
+from training.config import DATA_DIR, MODELS_DIR, PROCESSED_DATA_DIR
 
 app = typer.Typer()
+
 
 @app.command()
 def transform(
@@ -35,6 +38,7 @@ def transform(
     bow_path.parent.mkdir(parents=True, exist_ok=True)
     with open(bow_path, "wb") as f:
         pickle.dump(cv, f)
+
 
 if __name__ == "__main__":
     app()

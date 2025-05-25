@@ -1,0 +1,36 @@
+stages:
+  preprocess:
+    cmd: python training/modeling/preprocess.py
+    deps:
+    - data/raw/a1_RestaurantReviews_HistoricDump.tsv
+    - training/modeling/preprocess.py
+    outs:
+    - data/processed/corpus.pkl
+  transform:
+    cmd: python training/modeling/transform.py
+    deps:
+    - data/raw/a1_RestaurantReviews_HistoricDump.tsv
+    - data/processed/corpus.pkl
+    - training/modeling/transform.py
+    outs:
+    - models/bow/BoW_Sentiment_Model.pkl
+    - data/processed/features.csv
+    - data/processed/labels.csv
+  split:
+    cmd: python training/modeling/split.py
+    deps:
+    - data/processed/features.csv
+    - data/processed/labels.csv
+    - training/modeling/split.py
+    outs:
+    - data/processed/splits
+  train:
+    cmd: python training/modeling/model_train.py
+    deps:
+    - data/processed/splits
+    - training/modeling/model_train.py
+    outs:
+    - models/SentimentModel.pkl
+    metrics:
+    - models/metrics.json:
+        cache: false

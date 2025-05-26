@@ -75,8 +75,8 @@ stages:
       nfiles: 4
     - path: training/modeling/model_train.py
       hash: md5
-      md5: 03f4cab82c0da9ea40301e5d2b8a6691
-      size: 1876
+      md5: 16ece62acfd18e1bec55bbaac2174b6d
+      size: 1894
     outs:
     - path: models/SentimentModel.pkl
       hash: md5

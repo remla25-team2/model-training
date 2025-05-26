@@ -70,7 +70,7 @@ To check model metrics:
     └── plots.py                <- Code to create visualizations
 ```
 
---------## ML Test Score Coverage
+## ML Test Score Coverage
 
 | Category                | Test File                | Description                                 |
 |-------------------------|-------------------------|---------------------------------------------|

@@ -4,7 +4,20 @@
     <img src="https://img.shields.io/badge/CCDS-Project%20template-328F97?logo=cookiecutter" />
 </a>
 
-No
+
+
+## DVC setup
+This repository is using Data Version Control with remote storage. To pick files from remote storage do:
+
+- ```make requirements``` to download all requirements and dvc
+-  ```dvc pull``` this will pull all training model files from the Google Drive. Follow authenticqtion in browser to get access to the remote storage.
+-  ```dvc push``` will push your changes to the model files to the remote storage if you have appropriate access.
+
+To launch training pipeline:
+- ```dvc repro``` it will launch all pipeline stages and create the missing files locally
+
+To check model metrics:
+- ```dvc exp show --no-pager``` will show the model accuracy, precision and recall
 
 ## Project Organization
 

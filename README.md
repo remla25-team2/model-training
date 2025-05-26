@@ -72,3 +72,12 @@ To check model metrics:
 
 --------
 
+## ML Test Score Coverage
+
+| Category                | Test File                | Description                                 |
+|-------------------------|-------------------------|---------------------------------------------|
+| Feature & Data Integrity| test_data_integrity.py   | Schema, missing values          |
+| Model Development       | test_model_train.py      | Model training           |
+| ML Infrastructure       | test_pipeline.py         | DVC outputs            |
+| Monitoring              | test_monitor.py          | Data drift               |
+| Mutamorphic testing     | test_mutamorpic.py       | Mutamorphism             |

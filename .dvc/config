@@ -5,5 +5,3 @@
     url = gdrive://1RYkAOR6ZUfDJbNKAaCNVNYRzghKLtIDO
     gdrive_client_id = 700291530579-8uhh2t381654m9st12rsj2fi9jltf9t5.apps.googleusercontent.com
     gdrive_client_secret = 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
-    gdrive_use_service_account = true
-    gdrive_service_account_json_file_path = remlaproject-460716-28f297e7bc97.json

@@ -1,5 +1,8 @@
-# Data
-/data/
+#Data
+data/*
+data/raw/a1_RestaurantReviews_HistoricDump.tsv
+!data/raw/
+!data/raw/.dvc
 
 # Mac OS-specific storage files
 .DS_Store

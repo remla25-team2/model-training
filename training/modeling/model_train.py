@@ -58,7 +58,7 @@ def train(
         "confusion_matrix": cm.tolist(),
     }
 
-    with open(model_metric_path, "w") as f:
+    with open(model_metric_path, "w", encoding="utf-8") as f:
         json.dump(metrics, f, indent=4)
 
 

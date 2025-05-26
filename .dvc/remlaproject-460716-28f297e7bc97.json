@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "remlaproject-460716",
+  "private_key_id": "28f297e7bc9792e8df22048bb1a671276be3ef92",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCvw42hVd1r+YHW\nA9gzXMl52uX5x7kFCstRse1UXDv70S70UhQElH8MxXl80AoIJsH3FC4qiO0R998d\nRrmDfdyP9exyEPCxRwXEqbeTvzbpxIN79TN4LLQA23VlUTxyxaYX4id/nhpFnjc0\nS98N9dmgm4xQedzzmPbrkBZNRsyGQW2d5oV8RhGFYguk5pXmopVw8OpyZ3XX4GAt\nTkoZ3qu7aXPOoOpIFYxHkq5u+bClkQiPNVbf+7aSlwgI/RWHkIl4So85Eq3JA3l8\nJuzuekeeOTYoiwFG7RX3Nu4kgzho4VJKSzJGUrRhK5vWMUGrysXDrlSN1ncdamgS\nzNZXX0LXAgMBAAECggEAV2tYAiqG2rFalmuLGODJhMYPJFDmAVABGDz64b6ORw0f\n4X0BX9XL6zo81otSsgM07gMngxhfcVRrsFAA7RmoniGe3Iz4afP9NneDSwUL9vE6\nxGiMlPUHAnYkyaPCAQO1PKPLKXolbwLmSiiCZJsnBu7WtyAleTNXfIpJzV2tVAhb\nteTpX2fsIzba4bP/wYJVWAbJbXcqRdkNtaz5uKS76nzK58Qni71c0WK3Jq3pP/ob\nVhl7EQCp/nPbJebPSBdxILcMkg3hL+U3ZnhaM0Z8jMwXA8DlzDNWJnNFJmYJaFSk\nleBoAo0mlq7IyzlSv6MvZ3ZGLh/RUseF6l9AkGmbgQKBgQDaq4ayajok6ef11nSS\n2D1OCDTVCAl6xwC0A/3ElpEuwfBVl55etV7XF64B0DqR3SziFGvJdJIKM5XduwBR\nnKzLRi0jwo4dxjrjqCS4ujNUMcsODW30GJRA7YU4FQgSL26VO3Kx2ZOuKJzLvonm\neC3Qk+OYLvOYPDLNG1yqv/W3kQKBgQDNxOl9hnXDvkriL/dLPF7hGorAN2BGrHIR\nxGOIQ8MyBlD1dyKYA6SjywYQag4xLVUTmQCE8xB+izDXKsGB7GhV7bEfXg7LRt9F\nuP5lv5jJvdpJyK51eEnsTWHTg7j5sN8c2og4xo1hOy+ZMd5ZJvAOxN+1RIt6jTUG\nG55z6UMv5wKBgQCITZDZl5OEvPSk7beebQHRqRXdkHPwPyl2DGLbbosy3RrFD4xd\nNqrWYmFJqhVIJNi8V8RUP8BkcYFCRDVPqdyfnK+4caaKcqz0iTPSneYu3hbXPJHE\nLKoEyslWiu2MAFrq1LKKn7gJQDF0YuGsck8Ei5q7mtCmnSeBaEPb/2nXsQKBgQCT\nV30aNT3+fDSC4nXhmckWxzqziPOXp8PGlSnwWRVcrMkr+7L5xyINZ0NgXZDsBdn1\nvolwqdwVwPWoHSWTMwVDAoDiRSeyx3z5IA6KLTfqvdehHeJOm2PToVV7b8b0hII+\n1vzUKtjx1r+uotbkX81lxfOqiPqXNqXRSdWcilth4QKBgBoiclxAU6pd8bqjyWqI\npVgLI2fURPBogAVeKIaRQe9mpt5IyrnZRwabutkfLLoYU75M4f+/Wi42xdjiLxvN\ngSYkJSv3XmIOuEwAgjeAcfL1FNKz3O5y/ulnNaxO2EY0q277b8vyaDDZ4rLyvfjU\nYQj0ZMokxYP+IyEbKA4731mC\n-----END PRIVATE KEY-----\n",
+  "client_email": "ivans-806@remlaproject-460716.iam.gserviceaccount.com",
+  "client_id": "107199693899571840694",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/ivans-806%40remlaproject-460716.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

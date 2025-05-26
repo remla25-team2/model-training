@@ -70,5 +70,11 @@ To check model metrics:
     └── plots.py                <- Code to create visualizations
 ```
 
---------
+--------## ML Test Score Coverage
 
+| Category                | Test File                | Description                                 |
+|-------------------------|-------------------------|---------------------------------------------|
+| Feature & Data Integrity| test_data_integrity.py   | Schema, missing values          |
+| Model Development       | test_model_train.py      | Model training           |
+| ML Infrastructure       | test_pipeline.py         | DVC outputs            |
+| Monitoring              | test_monitoring.py       | Data drift               |

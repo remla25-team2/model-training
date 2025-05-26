@@ -1,0 +1,163 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*.*"]
+  pull_request:
+    branches: [main]
+
+env:
+  PYTHON_VERSION: "3.10"
+  COVERAGE_THRESHOLD: "90"
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies (+ dev tools)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e . 
+          pip install pytest coverage pytest-cov pylint
+
+      - name: Pylint (warnings break the build)
+        run: pylint model_training
+
+      - name: Unit tests + coverage
+        run: |
+          coverage run -m pytest -q
+          coverage xml
+          echo "COVER=$(coverage xml -o - \
+                | grep -o 'line-rate=\"[0-9.]*\"' \
+                | cut -d\" -f2)" >> $GITHUB_ENV
+
+      - name: Fail if coverage below threshold
+        run: |
+          python - << 'PY'
+          import os, sys
+          cov = float(os.environ["COVER"]) * 100
+          thr = float(os.environ["COVERAGE_THRESHOLD"])
+          if cov < thr:
+              sys.exit(f"Coverage {cov:.1f}% < {thr}% threshold")
+          PY
+      - name: "Integration test: DVC pipeline"
+        run: |
+          pytest tests/test_pipeline.py -m integration -v
+
+  build:
+    needs: test
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install lib-version
+        run: |
+          python -m pip install --upgrade pip
+          pip install git+https://github.com/remla25-team2/lib-version@v0.2.2
+
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v2
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: remla25-team2-bot
+          password: ${{ secrets.GHBOT_TOKEN }}
+
+      # For tagged releases
+      - name: Get release version with lib-version
+        id: get_version
+        run: |
+          VERSION=$(lib-version version current)
+          MAJOR=$(echo "$VERSION" | cut -d . -f 1)
+          MINOR=$(echo "$VERSION" | cut -d . -f 2)
+          echo "version=$VERSION" >> $GITHUB_ENV
+          echo "version_major=$MAJOR" >> $GITHUB_ENV
+          echo "version_minor=$MINOR" >> $GITHUB_ENV
+          echo "version=$VERSION"
+          echo "version_major=$MAJOR"
+          echo "version_minor=$MINOR"
+          BUMPED_VERSION=$(lib-version version next)
+          echo "bumped_version=$BUMPED_VERSION"
+
+      - name: Bump version with lib-version
+        if: startsWith(github.ref, 'refs/tags/')
+        id: bump_version
+        run: |
+          lib-version bump patch --push
+          VERSION=$(lib-version version current)
+          MAJOR=$(echo "$VERSION" | cut -d . -f 1)
+          MINOR=$(echo "$VERSION" | cut -d . -f 2)
+          echo "version=$VERSION" >> $GITHUB_ENV
+          echo "version_major=$MAJOR" >> $GITHUB_ENV
+          echo "version_minor=$MINOR" >> $GITHUB_ENV
+          echo "version=$VERSION"
+          echo "version_major=$MAJOR"
+          echo "version_minor=$MINOR"
+
+      - name: Create builder
+        id: buildx
+        run: |
+          IMG="ghcr.io/${{ github.repository }}"
+          IMG=${IMG@L}
+
+          docker buildx create --use --name multiarch-builder
+          docker buildx inspect --bootstrap
+
+      - name: Build and push multi-arch image (release)
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          IMG="ghcr.io/${{ github.repository }}"
+          IMG=${IMG@L}
+
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            --tag $IMG:${{ env.version }} \
+            --tag $IMG:${{ env.version_major }}.${{ env.version_minor }}.latest \
+            --tag $IMG:${{ env.version_major }}.latest \
+            --tag $IMG:latest \
+            --push \
+            .
+
+      # For main branch (pre-release)
+      - name: Get pre-release version with lib-version
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+        id: pre_version
+        run: |
+          NEXT_VERSION=$(lib-version version next)
+          PRE_VERSION="${NEXT_VERSION}-pre"
+          echo "pre_version=$PRE_VERSION" >> $GITHUB_ENV
+
+      - name: Build and push multi-arch image (pre-release)
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+        run: |
+          IMG="ghcr.io/${{ github.repository }}"
+          IMG=${IMG@L}
+
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            --tag $IMG:${{ env.pre_version }} \
+            --tag $IMG:pre-release \
+            --push \
+            .

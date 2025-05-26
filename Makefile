@@ -33,18 +33,40 @@ lint:
 	isort --check --diff training
 	black --check training
 
+## Advanced linting with pylint and bandit
+.PHONY: lint-advanced
+lint-advanced:
+	pylint training
+	bandit -c bandit.yaml -r ./training || true
+
+## All linting checks
+.PHONY: lint-all
+lint-all: lint lint-advanced
+
 ## Format source code with black
 .PHONY: format
 format:
 	isort training
 	black training
 
-
-
-## Run tests
+## Run tests with coverage
 .PHONY: test
 test:
-	python -m pytest tests
+	python -m pytest tests --cov=training --cov-report=term-missing --cov-report=xml
+
+## Generate quality reports
+.PHONY: quality-report
+quality-report:
+	@echo "=== Code Quality Report ==="
+	@echo "Running pylint..."
+	@pylint training --output-format=text --score=yes | tee pylint-report.txt || true
+	@echo "Running flake8..."
+	@flake8 training --statistics --tee --output-file=flake8-report.txt || true
+	@echo "Running bandit..."
+	@bandit -r training -f json -o bandit-report.json || true
+	@echo "Running tests with coverage..."
+	@python -m pytest tests --cov=training --cov-report=term-missing --cov-report=xml || true
+	@echo "Quality reports generated in: pylint-report.txt, flake8-report.txt, bandit-report.json, coverage.xml"
 ## Download Data from storage system
 .PHONY: sync_data_down
 sync_data_down:

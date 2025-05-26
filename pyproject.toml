@@ -19,9 +19,12 @@ dependencies = [
     "black",
     "flake8",
     "isort",
+    "pylint",
+    "bandit",
     "loguru",
     "pip",
     "pytest",
+    "pytest-cov",
     "python-dotenv",
     "tqdm",
     "typer",
@@ -31,7 +34,7 @@ dependencies = [
     "numpy~=2.2.5",
     "lib-ml @ git+https://github.com/remla25-team2/lib-ml.git#egg=lib-ml",
 ]
-requires-python = "~=3.10.0"
+requires-python = ">=3.10.0"
 
 [tool.black]
 line-length = 99

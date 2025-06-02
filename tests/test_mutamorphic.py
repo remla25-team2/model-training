@@ -29,4 +29,3 @@ def test_prediction_stability_under_feature_swap(trained_model, test_data):
             f"Prediction changed after swapping features {i} and {j} "
             f"in sample index {sample_idx}: {prediction_original} -> {prediction_modified}"
         )
-    p

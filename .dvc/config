@@ -4,4 +4,4 @@
 ['remote "myremote"']
     url = gdrive://1RYkAOR6ZUfDJbNKAaCNVNYRzghKLtIDO
     gdrive_use_service_account = true
-    gdrive_service_account_json_file_path = .dvc/tmp/remlaproject-sa.json
+    gdrive_service_account_json_file_path = tmp/remlaproject-sa.json

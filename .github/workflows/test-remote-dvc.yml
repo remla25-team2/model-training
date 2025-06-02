@@ -1,0 +1,28 @@
+name: DVC GDrive Setup
+
+on:
+  push:
+
+jobs:
+  dvc:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install DVC and dependencies
+        run: pip install dvc dvc[gdrive] 
+
+      - name: Write service account JSON
+        run: |
+          mkdir -p .dvc/tmp
+          echo "${{ secrets.GDRIVE_SERVICEACCOUNT_SECRET }}" > .dvc/tmp/remlaproject-sa.json
+
+      - name: DVC Pull
+        run: dvc pull

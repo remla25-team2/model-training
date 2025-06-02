@@ -22,7 +22,7 @@ jobs:
       - name: Write service account JSON
         run: |
           mkdir -p .dvc/tmp
-          echo "${{ secrets.GDRIVE_SERVICEACCOUNT_SECRET }}" > .dvc/tmp/remlaproject-sa.json
+          printf '%s' "${{ secrets.GDRIVE_SERVICE_ACCOUNT_JSON }}" > .dvc/tmp/remlaproject-sa.json
 
       - name: DVC Pull
         run: dvc pull

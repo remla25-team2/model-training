@@ -20,10 +20,10 @@ jobs:
         run: pip install dvc dvc[gdrive] 
 
       - name: Write service account JSON
-        uses: jsdaniell/create-json@1.1.2
-        with:
-          name: ".dvc/tmp/remlaproject-sa.json"
-          json: ${{ secrets.GDRIVE_SERVICEACCOUNT_SECRET }}
+        run: |
+          mkdir -p .dvc/tmp
+          echo ${{ secrets.GDRIVE_SERVICEACCOUNT_SECRET }} | base64 -d > .dvc/tmp/remlaproject-sa.json
+
 
       - name: Debug JSON content
         run: |

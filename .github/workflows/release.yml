@@ -34,6 +34,10 @@ jobs:
       - name: Debug JSON content
         run: |
           head -n 2 .dvc/tmp/remlaproject-sa.json
+          
+      - name: Install testing dependencies
+        run: |
+            pip install pytest coverage pytest-cov pylint memory-profiler
 
       - name: Pull DVC data
         run: dvc pull

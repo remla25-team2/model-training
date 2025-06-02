@@ -5,6 +5,9 @@ on:
     tags:
       - "v*.*.*"
 
+env:
+  PYTHON_VERSION: "3.10"
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -20,13 +23,10 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-
       - name: Install flit, DVC, and dependencies
         run: |
-          python -m pip install --upgrade pip
           pip install flit dvc dvc-gdrive
           flit install --pth-file
-          pip install -r requirements.txt
           pip install pytest coverage pytest-cov pylint memory-profiler
 
       - name: Pull DVC data

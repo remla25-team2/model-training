@@ -1,22 +1,28 @@
 import numpy as np
 import pytest
 
-def swap_random_features(sample, rng):
-    """Swap two randomly chosen features in the input sample."""
-    x_swapped = sample.copy()
-    n_features = x_swapped.shape[0]
-    i, j = rng.choice(n_features, size=2, replace=False)
-    x_swapped[i], x_swapped[j] = x_swapped[j], x_swapped[i]
-    return x_swapped, i, j
+
+def swap_random_features(sample: np.ndarray, rng: np.random.Generator):
+    """
+    Given a 1D numpy array `sample`, swap two random indices and return:
+    (swapped_array, index_i, index_j).
+    """
+    n = sample.shape[0]
+    i, j = rng.integers(0, n), rng.integers(0, n)
+    swapped = sample.copy()
+    swapped[i], swapped[j] = swapped[j], swapped[i]
+    return swapped, i, j
+
 
 @pytest.fixture
-def test_data():
+def test_data(trained_model):
     """
-    Provide synthetic test data with exactly 13 features per sample,
-    matching what the trained_model expects.
+    Provide synthetic test data whose number of features exactly matches
+    trained_model.n_features_in_. Returns a dictionary with keys "X" and "y".
     """
     rng = np.random.default_rng(seed=42)
-    X = rng.random((10, 13))
+    n_features = trained_model.n_features_in_
+    X = rng.random((10, n_features))
     y = rng.integers(0, 2, size=(10,))
     return {"X": X, "y": y}
 

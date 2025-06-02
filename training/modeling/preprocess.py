@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from lib_ml.preprocessing import _clean
+from .lib_ml.preprocessing import _clean
 from loguru import logger
 import pandas as pd
 from tqdm import tqdm

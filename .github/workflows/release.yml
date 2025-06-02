@@ -1,0 +1,86 @@
+name: Model training
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install flit, DVC, and dependencies
+        run: |
+          pip install flit dvc dvc-gdrive
+          flit install --pth-file
+          pip install -r requirements.txt
+          pip install pytest coverage pytest-cov pylint memory-profiler
+
+      - name: Pull DVC data
+        run: dvc pull
+
+      - name: Lint with pylint
+        run: pylint training
+
+      - name: Run tests with coverage
+        run: pytest --cov=training --cov-report=term-missing
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install flit, DVC, and lib-version
+        run: |
+          pip install flit dvc dvc-gdrive
+
+      - name: Pull DVC data
+        run: dvc pull
+
+      - name: Run DVC pipeline (train model)
+        run: dvc repro
+
+      - name: Get release version with lib-version
+        id: get_version
+        run: |
+          VERSION=$(lib-version version current)
+          echo "version=$VERSION" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Rename model artifact for release
+        run: |
+          VERSION=${{ steps.get_version.outputs.version }}
+          cp models/SentimentModel.pkl models/SentimentModel_v${VERSION}.pkl
+
+      - name: Create GitHub Release and upload model artifact
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Model Release v${{ steps.get_version.outputs.version }}
+          tag_name: v${{ steps.get_version.outputs.version }}
+          files: models/SentimentModel_v${{ steps.get_version.outputs.version }}.pkl
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

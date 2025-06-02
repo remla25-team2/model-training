@@ -24,5 +24,9 @@ jobs:
           mkdir -p .dvc/tmp
           printf '%s' "${{ secrets.GDRIVE_SERVICEACCOUNT_SECRET }}" > .dvc/tmp/remlaproject-sa.json
 
+      - name: Debug JSON content
+        run: |
+          head -n 2 .dvc/tmp/remlaproject-sa.json
+
       - name: DVC Pull
         run: dvc pull

@@ -23,11 +23,17 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install flit, DVC, and dependencies
+      - name: Install DVC and dependencies
+        run: pip install dvc dvc[gdrive]
+
+      - name: Write service account JSON
         run: |
-          pip install flit dvc dvc-gdrive
-          flit install --pth-file
-          pip install pytest coverage pytest-cov pylint memory-profiler
+          mkdir -p .dvc/tmp
+          echo "${{ secrets.GDRIVE_SERVICEACCOUNT_SECRET }}" | base64 -d > .dvc/tmp/remlaproject-sa.json
+
+      - name: Debug JSON content
+        run: |
+          head -n 2 .dvc/tmp/remlaproject-sa.json
 
       - name: Pull DVC data
         run: dvc pull
@@ -57,9 +63,17 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install flit, DVC, and lib-version
+      - name: Install DVC and dependencies
+        run: pip install dvc dvc[gdrive]
+
+      - name: Write service account JSON
         run: |
-          pip install flit dvc dvc-gdrive
+          mkdir -p .dvc/tmp
+          echo "${{ secrets.GDRIVE_SERVICEACCOUNT_SECRET }}" | base64 -d > .dvc/tmp/remlaproject-sa.json
+
+      - name: Debug JSON content
+        run: |
+          head -n 2 .dvc/tmp/remlaproject-sa.json
 
       - name: Pull DVC data
         run: dvc pull

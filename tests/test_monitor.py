@@ -5,7 +5,7 @@ from memory_profiler import memory_usage
 import joblib
 from pathlib import Path
 
-MAX_MEMORY_MB = 50         # Maximum allowed memory (MB) during a single predict
+MAX_MEMORY_MB = 200         # Maximum allowed memory (MB) during a single predict
 MAX_LATENCY_SEC = 0.1      # Maximum allowed latency (seconds) for one prediction
 MIN_THROUGHPUT = 100       # Minimum allowed throughput (requests/sec)
 

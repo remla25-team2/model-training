@@ -37,7 +37,6 @@ dependencies = [
     "pandas~=2.2.3",
     "numpy~=2.2.5",
     "lib-ml @ git+https://github.com/remla25-team2/lib-ml.git#egg=lib-ml",
-    "ml_checkers",
 ]
 requires-python = ">=3.10.0"
 

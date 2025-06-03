@@ -28,21 +28,7 @@ jobs:
             python -m pip install --upgrade pip
             make requirements
             python -m pip install -e .
-
             pip install pytest coverage pytest-cov pylint memory-profiler loguru
-      
-      - name: Checkout lib-ml
-        uses: actions/checkout@v4
-        with:
-          repository: remla25-team2/lib-ml
-          path: lib-ml
-
-      - name: Install lib-ml directly
-        working-directory: lib-ml
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install -e .
-
       
       - name: Install DVC and dependencies
         run: pip install dvc dvc[gdrive]
@@ -89,9 +75,7 @@ jobs:
             python -m pip install --upgrade pip
             make requirements
             python -m pip install -e .
-
             pip install pytest coverage pytest-cov pylint memory-profiler loguru
-
 
       - name: Install DVC and dependencies
         run: pip install dvc dvc[gdrive]
@@ -111,12 +95,39 @@ jobs:
       - name: Run DVC pipeline (train model)
         run: dvc repro
 
+      - name: Install lib-version CLI
+        run: |
+          python -m pip install --upgrade pip
+          # pin to whatever version/tag of lib-version you need
+          pip install lib-version
+
+      - name: Run DVC pipeline (train model)
+        run: dvc repro
+
       - name: Get release version with lib-version
         id: get_version
+        shell: bash
         run: |
           VERSION=$(lib-version version current)
-          echo "version=$VERSION" >> $GITHUB_ENV
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          MAJOR=$(echo "$VERSION" | cut -d . -f 1)
+          MINOR=$(echo "$VERSION" | cut -d . -f 2)
+          echo "version=$VERSION"       >> $GITHUB_ENV
+          echo "version_major=$MAJOR"   >> $GITHUB_ENV
+          echo "version_minor=$MINOR"   >> $GITHUB_ENV
+          echo "bumped_version=$(lib-version version next)" >> $GITHUB_ENV
+
+      - name: Bump version (only on tags)
+        if: startsWith(github.ref, 'refs/tags/')
+        id: bump_version
+        shell: bash
+        run: |
+          lib-version bump patch --push
+          VERSION=$(lib-version version current)
+          MAJOR=$(echo "$VERSION" | cut -d . -f 1)
+          MINOR=$(echo "$VERSION" | cut -d . -f 2)
+          echo "version=$VERSION"       >> $GITHUB_ENV
+          echo "version_major=$MAJOR"   >> $GITHUB_ENV
+          echo "version_minor=$MINOR"   >> $GITHUB_ENV
 
       - name: Rename model artifact for release
         run: |
@@ -133,3 +144,24 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get pre-release version (for main branch or tags)
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+        id: pre_version
+        shell: bash
+        run: |
+          NEXT_VERSION=$(lib-version version next)
+          PRE_VERSION="${NEXT_VERSION}-pre"
+          echo "pre_version=$PRE_VERSION" >> $GITHUB_ENV
+
+      - name: Build and push multi-arch image (only on main or tags)
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+        run: |
+          IMG="ghcr.io/${{ github.repository }}"
+          IMG=${IMG@L}
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            --tag $IMG:${{ env.pre_version }} \
+            --tag $IMG:pre-release \
+            --push \
+            .

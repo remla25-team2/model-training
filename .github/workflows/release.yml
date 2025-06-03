@@ -2,6 +2,8 @@ name: Model training
 
 on:
   push:
+    branches:
+      - main
     tags:
       - "v*.*.*"
 
@@ -119,15 +121,16 @@ jobs:
    
       - name: Rename model artifact for release
         run: |
-          VERSION=${{ steps.get_version.outputs.version }}
+          VERSION=${{ env.version }}
           cp models/SentimentModel.pkl models/SentimentModel_v${VERSION}.pkl
 
       - name: Create GitHub Release and upload model artifact
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
-          name: Model Release v${{ steps.get_version.outputs.version }}
-          tag_name: v${{ steps.get_version.outputs.version }}
-          files: models/SentimentModel_v${{ steps.get_version.outputs.version }}.pkl
+          name: Model Release v${{ env.version }}
+          tag_name: v${{ env.version }}
+          files: models/SentimentModel_v${{ env.version }}.pkl
           draft: false
           prerelease: false
         env:

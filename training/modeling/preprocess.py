@@ -1,10 +1,11 @@
 from pathlib import Path
-
-from .lib_ml.preprocessing import _clean
 from loguru import logger
 import pandas as pd
 from tqdm import tqdm
 import typer
+
+from lib_ml.preprocessing import _clean
+
 
 from training.config import DATA_DIR, PROCESSED_DATA_DIR
 

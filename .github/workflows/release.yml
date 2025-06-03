@@ -116,19 +116,7 @@ jobs:
           echo "version_minor=$MINOR"   >> $GITHUB_ENV
           echo "bumped_version=$(lib-version version next)" >> $GITHUB_ENV
 
-      - name: Bump version (only on tags)
-        if: startsWith(github.ref, 'refs/tags/')
-        id: bump_version
-        shell: bash
-        run: |
-          lib-version bump patch --push
-          VERSION=$(lib-version version current)
-          MAJOR=$(echo "$VERSION" | cut -d . -f 1)
-          MINOR=$(echo "$VERSION" | cut -d . -f 2)
-          echo "version=$VERSION"       >> $GITHUB_ENV
-          echo "version_major=$MAJOR"   >> $GITHUB_ENV
-          echo "version_minor=$MINOR"   >> $GITHUB_ENV
-
+   
       - name: Rename model artifact for release
         run: |
           VERSION=${{ steps.get_version.outputs.version }}
@@ -153,15 +141,3 @@ jobs:
           NEXT_VERSION=$(lib-version version next)
           PRE_VERSION="${NEXT_VERSION}-pre"
           echo "pre_version=$PRE_VERSION" >> $GITHUB_ENV
-
-      - name: Build and push multi-arch image (only on main or tags)
-        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
-        run: |
-          IMG="ghcr.io/${{ github.repository }}"
-          IMG=${IMG@L}
-          docker buildx build \
-            --platform linux/amd64,linux/arm64 \
-            --tag $IMG:${{ env.pre_version }} \
-            --tag $IMG:pre-release \
-            --push \
-            .

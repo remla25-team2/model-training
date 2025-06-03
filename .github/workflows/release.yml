@@ -100,8 +100,7 @@ jobs:
       - name: Install lib-version CLI
         run: |
           python -m pip install --upgrade pip
-          # pin to whatever version/tag of lib-version you need
-          pip install lib-version
+          pip install git+https://github.com/remla25-team2/lib-version@v0.2.2
 
       - name: Run DVC pipeline (train model)
         run: dvc repro

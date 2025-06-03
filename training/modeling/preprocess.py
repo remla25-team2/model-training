@@ -3,11 +3,9 @@ from loguru import logger
 import pandas as pd
 from tqdm import tqdm
 import typer
+from training.config import DATA_DIR, PROCESSED_DATA_DIR
 
 from lib_ml.preprocessing import _clean
-
-
-from training.config import DATA_DIR, PROCESSED_DATA_DIR
 
 app = typer.Typer()
 

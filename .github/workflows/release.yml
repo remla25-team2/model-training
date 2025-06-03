@@ -1,0 +1,146 @@
+name: Model training
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*.*.*"
+
+env:
+  PYTHON_VERSION: "3.10"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+            python -m pip install --upgrade pip
+            make requirements
+            python -m pip install -e .
+            pip install pytest coverage pytest-cov pylint memory-profiler loguru
+      
+      - name: Install DVC and dependencies
+        run: pip install dvc dvc[gdrive]
+
+      - name: Write service account JSON
+        run: |
+          mkdir -p .dvc/tmp
+          echo "${{ secrets.GDRIVE_SERVICEACCOUNT_SECRET }}" | base64 -d > .dvc/tmp/remlaproject-sa.json
+
+      - name: Debug JSON content
+        run: |
+          head -n 2 .dvc/tmp/remlaproject-sa.json
+
+      - name: Pull DVC data
+        run: dvc pull
+
+      - name: Lint with pylint
+        run: pylint training
+
+      - name: Run tests with coverage
+        run: pytest --cov=training --cov-report=term-missing
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+            python -m pip install --upgrade pip
+            make requirements
+            python -m pip install -e .
+            pip install pytest coverage pytest-cov pylint memory-profiler loguru
+
+      - name: Install DVC and dependencies
+        run: pip install dvc dvc[gdrive]
+
+      - name: Write service account JSON
+        run: |
+          mkdir -p .dvc/tmp
+          echo "${{ secrets.GDRIVE_SERVICEACCOUNT_SECRET }}" | base64 -d > .dvc/tmp/remlaproject-sa.json
+
+      - name: Debug JSON content
+        run: |
+          head -n 2 .dvc/tmp/remlaproject-sa.json
+
+      - name: Pull DVC data
+        run: dvc pull
+
+      - name: Run DVC pipeline (train model)
+        run: dvc repro
+
+      - name: Install lib-version CLI
+        run: |
+          python -m pip install --upgrade pip
+          # pin to whatever version/tag of lib-version you need
+          pip install lib-version
+
+      - name: Run DVC pipeline (train model)
+        run: dvc repro
+
+      - name: Get release version with lib-version
+        id: get_version
+        shell: bash
+        run: |
+          VERSION=$(lib-version version current)
+          MAJOR=$(echo "$VERSION" | cut -d . -f 1)
+          MINOR=$(echo "$VERSION" | cut -d . -f 2)
+          echo "version=$VERSION"       >> $GITHUB_ENV
+          echo "version_major=$MAJOR"   >> $GITHUB_ENV
+          echo "version_minor=$MINOR"   >> $GITHUB_ENV
+          echo "bumped_version=$(lib-version version next)" >> $GITHUB_ENV
+
+   
+      - name: Rename model artifact for release
+        run: |
+          VERSION=${{ env.version }}
+          cp models/SentimentModel.pkl models/SentimentModel_v${VERSION}.pkl
+
+      - name: Create GitHub Release and upload model artifact
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Model Release v${{ env.version }}
+          tag_name: v${{ env.version }}
+          files: models/SentimentModel_v${{ env.version }}.pkl
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get pre-release version (for main branch or tags)
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+        id: pre_version
+        shell: bash
+        run: |
+          NEXT_VERSION=$(lib-version version next)
+          PRE_VERSION="${NEXT_VERSION}-pre"
+          echo "pre_version=$PRE_VERSION" >> $GITHUB_ENV

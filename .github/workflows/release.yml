@@ -121,7 +121,6 @@ jobs:
       - name: Rename model artifact for release
         run: |
           VERSION=${{ env.version }}
-          cp models/SentimentModel.pkl models/SentimentModel.pkl
           cp models/bow/BoW_Sentiment_Model.pkl models/BoW_Sentiment_Model.pkl
 
       - name: Create GitHub Release and upload model artifact

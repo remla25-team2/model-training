@@ -1,0 +1,26 @@
+# .flake8
+
+[flake8]
+# Maximum allowed line length
+max-line-length = 88
+
+# Ignore specific rules
+# E203 and W503 are ignored to be compatible with black
+ignore = E203, W503
+
+# Exclude common directories
+exclude =
+    .git,
+    __pycache__,
+    build,
+    dist,
+    .venv,
+    venv,
+    .eggs,
+    *.egg-info
+
+# Show the source code for each error
+show-source = true
+
+# Enable specific extensions (optional)
+# extend-select = B,C,E,F,W,T4,B9

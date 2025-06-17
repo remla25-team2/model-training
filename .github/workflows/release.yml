@@ -136,3 +136,8 @@ jobs:
           NEXT_VERSION=$(lib-version version next)
           PRE_VERSION="${NEXT_VERSION}-pre"
           echo "pre_version=$PRE_VERSION" >> $GITHUB_ENV
+
+      - uses: Silleellie/pylint-github-action@v2.1
+        with:
+          lint-path: training
+          python-version: 3.11  

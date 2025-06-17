@@ -1,10 +1,9 @@
-import pandas as pd
-import numpy as np
-from pathlib import Path
 import joblib
 from training.modeling.model_train import train
 from training.modeling.transform import transform
 from training.modeling.preprocess import preprocess
+from training.modeling.split import split
+import pickle
 
 def test_metamorphic_synonym(tmp_path):
     raw_path = tmp_path / "raw.tsv"
@@ -21,7 +20,7 @@ def test_metamorphic_synonym(tmp_path):
         labels_path=labels_path,
         bow_path=bow_path
     )
-    from training.modeling.split import split
+    
     splits_dir = tmp_path / "splits"
     split(
         dataset_path=features_path,
@@ -35,7 +34,7 @@ def test_metamorphic_synonym(tmp_path):
         model_path=model_path,
         model_metric_path=metrics_path
     )
-    import pickle
+    
     clf = joblib.load(model_path)
     with open(bow_path, "rb") as f:
         vectorizer = pickle.load(f)

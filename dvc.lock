@@ -9,8 +9,8 @@ stages:
       size: 55585
     - path: training/modeling/preprocess.py
       hash: md5
-      md5: f5f90a0982eda8bed01ef97a8c7032c1
-      size: 922
+      md5: 22261bfe83f8283878f9c76ef6af1dc3
+      size: 926
     outs:
     - path: data/processed/corpus.pkl
       hash: md5

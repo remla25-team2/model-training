@@ -29,20 +29,11 @@ jobs:
         run: |
             python -m pip install --upgrade pip
             make requirements
-            python -m pip install -e .
-            pip install pytest coverage pytest-cov pylint memory-profiler loguru
-      
-      - name: Install DVC and dependencies
-        run: pip install dvc dvc[gdrive]
 
       - name: Write service account JSON
         run: |
           mkdir -p .dvc/tmp
           echo "${{ secrets.GDRIVE_SERVICEACCOUNT_SECRET }}" | base64 -d > .dvc/tmp/remlaproject-sa.json
-
-      - name: Debug JSON content
-        run: |
-          head -n 2 .dvc/tmp/remlaproject-sa.json
 
       - name: Pull DVC data
         run: dvc pull

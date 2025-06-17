@@ -4,7 +4,7 @@
 </a>
 
 ![Coverage](./coverage.svg)
-![pylint]()
+![pylint](https://img.shields.io/badge/PyLint-8.25-yellow?logo=python&logoColor=white)
 
 
 ## DVC setup

@@ -39,20 +39,17 @@ jobs:
       - name: Lint with pylint
         run: pylint training
 
-      - name: Run tests with coverage
-        run: |
-          pytest --cov=training --cov-report=term-missing --cov-report=xml
-          coverage xml
-          coverage-badge -o coverage.svg
-      
       - uses: Silleellie/pylint-github-action@v2.1
         with:
           lint-path: training
           python-version: 3.11  
 
-      - name: Commit files
+      - name: Run tests with coverage
         run: |
+          pytest --cov=training --cov-report=term-missing --cov-report=xml
+          coverage xml
+          coverage-badge -o coverage.svg
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git diff --quiet || (git add coverage.svg && git commit -m "Updated coverage.svg" && git commit -m "Updated coverage.svg")
-          git push origin HEAD:${GITHUB_REF_NAME}
+          git push origin HEAD:${GITHUB_HEAD_REF}

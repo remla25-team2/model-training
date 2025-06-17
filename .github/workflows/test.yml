@@ -50,7 +50,8 @@ jobs:
           python-version: 3.11  
 
       - name: Coverage Badge
-        uses: tj-actions/coverage-badge-py@v2
+        run: coverage-badge -o coverage.svg
+
 
       - name: Verify Changed files
         uses: tj-actions/verify-changed-files@v16

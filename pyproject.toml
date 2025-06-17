@@ -30,6 +30,7 @@ dependencies = [
     "pytest~=8.3.5",
     "pytest-cov~=6.2.1",
     "coverage~=7.9.0",
+    "coverage-badge~=1.1.2",
     "memory-profiler~=0.61.0",
     "python-dotenv~= 1.1.0",
     "tqdm~=4.67.1",

@@ -43,15 +43,12 @@ jobs:
         run: |
           pytest --cov=training --cov-report=term-missing --cov-report=xml
           coverage xml
+          coverage-badge -o coverage.svg
       
       - uses: Silleellie/pylint-github-action@v2.1
         with:
           lint-path: training
           python-version: 3.11  
-
-      - name: Coverage Badge
-        run: coverage-badge -o coverage.svg
-
 
       - name: Verify Changed files
         uses: tj-actions/verify-changed-files@v16

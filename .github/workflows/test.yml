@@ -40,7 +40,9 @@ jobs:
         run: pylint training
 
       - name: Run tests with coverage
-        run: pytest --cov=training --cov-report=term-missing --cov-report=xml
+        run: |
+          pytest --cov=training --cov-report=term-missing --cov-report=xml
+          coverage xml
       
       - uses: Silleellie/pylint-github-action@v2.1
         with:

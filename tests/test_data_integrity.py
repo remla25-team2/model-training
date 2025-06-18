@@ -1,17 +1,19 @@
-# import pandas as pd
-# from pathlib import Path
+#Feature & Data test
+import pandas as pd
+from pathlib import Path
 
-# def test_raw_data_schema():
-#     data_path = Path("data/raw/a1_RestaurantReviews_HistoricDump.tsv")
-#     df = pd.read_csv(data_path, delimiter='\t', quoting=3)
-#     assert "Review" in df.columns
-#     assert "Liked" in df.columns
-#     assert df["Review"].notnull().all()
-#     assert df["Liked"].isin([0, 1]).all()
-#     assert df["Review"].str.strip().ne("").all()
-#     assert df["Liked"].dtype in [int, "int64", "int32"]
+def test_raw_data_schema():
+    data_path = Path("data/raw/a1_RestaurantReviews_HistoricDump.tsv")
+    assert data_path.exists(), f"Data file not found: {data_path}"
 
-# def test_no_duplicate_reviews():
-#     data_path = Path("data/raw/a1_RestaurantReviews_HistoricDump.tsv")
-#     df = pd.read_csv(data_path, delimiter='\t', quoting=3)
-#     assert df["Review"].duplicated().sum() == 0
+    df = pd.read_csv(data_path, delimiter='\t', quoting=3)
+
+    required_columns = {"Review", "Liked"}
+    assert required_columns.issubset(df.columns), f"Missing columns: {required_columns - set(df.columns)}"
+
+    assert df["Review"].notnull().all()
+    assert df["Liked"].isin([0, 1]).all()
+
+    assert df["Review"].str.strip().ne("").all()
+    assert (df["Review"].str.len() > 0).all(), "Empty reviews found"
+    assert df["Liked"].dtype in [int, "int64", "int32"]

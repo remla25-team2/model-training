@@ -1,9 +1,10 @@
 # sentiment-analysis
-
 <a target="_blank" href="https://cookiecutter-data-science.drivendata.org/">
     <img src="https://img.shields.io/badge/CCDS-Project%20template-328F97?logo=cookiecutter" />
 </a>
 
+![Coverage](./coverage.svg)
+![pylint](https://img.shields.io/badge/PyLint-8.25-yellow?logo=python&logoColor=white)
 
 
 ## DVC setup

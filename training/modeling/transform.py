@@ -1,5 +1,4 @@
 from pathlib import Path
-import pickle
 
 from loguru import logger
 import pandas as pd
@@ -27,7 +26,7 @@ def transform(
 
     logger.info(f"Saving features to {dataset_path}")
     feature_names = tp._vectorizer.get_feature_names_out()
-    pd.DataFrame(X.toarray(), columns=feature_names).to_csv(dataset_path, index=False)
+    pd.DataFrame(X.toarray(), columns=tp.get_feature_names()).to_csv(dataset_path, index=False)
 
 
     # Labels: assumed to be in original corpus file name

@@ -25,7 +25,7 @@ def transform(
     X = tp.fit(corpus).transform(corpus)
 
     logger.info(f"Saving features to {dataset_path}")
-    pd.DataFrame(X.toarray(), columns=tp._vectorizer.get_feature_names()).to_csv(dataset_path, index=False)
+    pd.DataFrame(X.toarray(), columns=tp.vectorizer.get_feature_names()).to_csv(dataset_path, index=False)
 
 
     # Labels: assumed to be in original corpus file name

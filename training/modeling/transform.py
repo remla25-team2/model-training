@@ -25,8 +25,10 @@ def transform(
     X = tp.fit(corpus).transform(corpus)
 
     logger.info(f"Saving features to {dataset_path}")
-    pd.DataFrame(X.toarray(), columns=tp.vectorizer.get_feature_names()).to_csv(dataset_path, index=False)
-
+    # pylint: disable=W0212
+    feature_names = tp._vectorizer.get_feature_names()
+    pd.DataFrame(X.toarray(), columns=feature_names).to_csv(dataset_path, index=False)
+    # pylint: enable=W0212
 
     # Labels: assumed to be in original corpus file name
     df = pd.read_csv(raw_dataset_path, delimiter="\t", quoting=3)

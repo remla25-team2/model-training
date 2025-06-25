@@ -29,7 +29,7 @@ def transform(
     feature_names = tp._vectorizer.get_feature_names_out()
     pd.DataFrame(X.toarray(), columns=feature_names).to_csv(dataset_path, index=False)
     # pylint: enable=W0212
-
+    logger.info(f"Saving labels to {labels_path}")
     # Labels: assumed to be in original corpus file name
     df = pd.read_csv(raw_dataset_path, delimiter="\t", quoting=3)
     y = df.iloc[:, -1].values

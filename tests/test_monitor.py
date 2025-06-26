@@ -5,10 +5,16 @@ import pytest
 from memory_profiler import memory_usage
 import joblib
 from pathlib import Path
+import pandas as pd
+from training.modeling.transform import transform as run_transform_pipeline
+from training.config import RAW_DATA_DIR, PROCESSED_DATA_DIR, MODELS_DIR
+
 
 MAX_MEMORY_MB = 200         # Maximum allowed memory (MB) during a single predict
 MAX_LATENCY_SEC = 0.1      # Maximum allowed latency (seconds) for one prediction
 MIN_THROUGHPUT = 100       # Minimum allowed throughput (requests/sec)
+MAX_FEATURE_EXTRACTION_TIME_SEC = 5.0 # Max time for feature extraction
+MAX_FEATURE_EXTRACTION_MEMORY_MB = 500 # Max memory for feature extraction
 
 
 @pytest.fixture(scope="module")
@@ -74,3 +80,43 @@ def test_model_throughput(trained_model):
     assert throughput > MIN_THROUGHPUT, (
         f"Throughput {throughput:.1f} req/s below minimum {MIN_THROUGHPUT} req/s."
     )
+
+
+def test_feature_extraction_cost():
+    """
+    Ensure feature extraction (transform stage) performance meets requirements.
+    Measures both time and memory.
+    """
+    raw_path = RAW_DATA_DIR / "a1_RestaurantReviews_HistoricDump.tsv"
+    corpus_path = PROCESSED_DATA_DIR / "corpus.pkl"
+    features_path = PROCESSED_DATA_DIR / "features.csv" # Temporary output for this test
+    labels_path = PROCESSED_DATA_DIR / "labels.csv"     # Temporary output for this test
+    bow_path = MODELS_DIR / "bow" / "BoW_Sentiment_Model.pkl" # This is the actual output path
+
+    if not raw_path.exists():
+        pytest.skip(f"Raw data not found at {raw_path}. Run 'dvc pull' first.")
+    if not corpus_path.exists():
+        pytest.skip(f"Corpus not found at {corpus_path}. Run 'dvc repro preprocess' first.")
+
+
+    def measure_transform():
+        # Ensure transform function gets correct paths
+        run_transform_pipeline(
+            raw_dataset_path=raw_path,
+            corpus_path=corpus_path,
+            dataset_path=features_path,
+            labels_path=labels_path,
+            bow_path=bow_path,
+        )
+
+    # Measure time
+    start_time = time.perf_counter()
+    peak_memory_mb = max(memory_usage(measure_transform, interval=0.1, timeout=60))
+    end_time = time.perf_counter()
+    duration = end_time - start_time
+
+    assert duration < MAX_FEATURE_EXTRACTION_TIME_SEC, \
+        f"Feature extraction time {duration:.2f}s exceeds {MAX_FEATURE_EXTRACTION_TIME_SEC}s."
+    assert peak_memory_mb < MAX_FEATURE_EXTRACTION_MEMORY_MB, \
+        f"Feature extraction peak memory {peak_memory_mb:.2f}MB exceeds {MAX_FEATURE_EXTRACTION_MEMORY_MB}MB."
+

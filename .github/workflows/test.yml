@@ -45,6 +45,66 @@ jobs:
           coverage xml
           coverage-badge -o coverage.svg
 
+            - name: Show coverage summary and update README
+      - name: Coverage summary and update README
+        run: |
+          # Get coverage summary text
+          coverage report --rcfile=.coveragerc -m > coverage_summary.txt
+
+          # Define markers
+          START_MARKER="<!-- COVERAGE_SUMMARY_START -->"
+          END_MARKER="<!-- COVERAGE_SUMMARY_END -->"
+
+          # Remove old summary block
+          sed -i "/$START_MARKER/,/$END_MARKER/d" README.md
+
+          # Prepare table header
+          {
+            echo ""
+            echo "$START_MARKER"
+            echo ""
+            echo "| File | Statements | Miss | Coverage | Missing Lines |"
+            echo "|------|------------|------|----------|----------------|"
+
+            # Skip first 2 lines (header and separator), and last line (summary)
+            tail -n +3 coverage_summary.txt | sed '$d' | while read -r line; do
+              FILE=$(echo "$line" | awk '{print $1}')
+              STMT=$(echo "$line" | awk '{print $2}')
+              MISS=$(echo "$line" | awk '{print $3}')
+              COV=$(echo "$line" | awk '{print $4}')
+              MISS_LNS=$(echo "$line" | cut -d' ' -f5-)
+              echo "| $FILE | $STMT | $MISS | $COV | $MISS_LNS |"
+            done
+
+            echo "$END_MARKER"
+          } >> README.md
+
+      - name: Extract test adequacy info and update README
+        run: |
+          # Remove old section
+          sed -i '/<!-- METRICS START -->/,/<!-- METRICS END -->/d' README.md
+
+          echo "<!-- METRICS START -->" >> README.md
+          echo "" >> README.md
+
+          # Group by category
+          for cat in DATA_AND_FEATURES MODEL_DEVELOPMENT INFRASTRUCTURE_TESTING MONITORING_TESTING; do
+            echo "#### ${cat^}" >> README.md
+            echo "" >> README.md
+            echo "| Metric | Value | Notes |" >> README.md
+            echo "|--------|-------|---------|" >> README.md
+            jq -r \
+              --arg cat "$cat" \
+              '. as $root | to_entries
+               | map(select(.value.category == $cat))
+               | .[] 
+               | "| \(.key) | \(.value.value) | \(.value.message // "-") |"' \
+               metrics.json >> README.md
+            echo "" >> README.md
+          done
+
+          echo "<!-- METRICS END -->" >> README.md
+
       - uses: Silleellie/pylint-github-action@v2.1
         with:
           lint-path: training

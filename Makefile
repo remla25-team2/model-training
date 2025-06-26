@@ -14,11 +14,8 @@ PYTHON_INTERPRETER = python
 ## Install Python dependencies
 .PHONY: requirements
 requirements:
-    pip install -e .
-    pip install -r requirements.txt --force-reinstall
-	
-
-
+	pip install -e .
+	pip install -r requirements.txt --force-reinstall
 
 ## Delete all compiled Python files
 .PHONY: clean

@@ -48,7 +48,6 @@ jobs:
           coverage xml
           coverage-badge -o coverage.svg
 
-            - name: Show coverage summary and update README
       - name: Coverage summary and update README
         run: |
           # Get coverage summary text

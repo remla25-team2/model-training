@@ -80,34 +80,13 @@ jobs:
 
             echo "$END_MARKER"
           } >> README.md
-
-      - name: Extract test adequacy info and update README
-        run: |
-          # Remove old section
-          sed -i '/<!-- METRICS START -->/,/<!-- METRICS END -->/d' README.md
-
-          echo "<!-- METRICS START -->" >> README.md
-          echo "" >> README.md
-
-          # Group by category
-          for cat in DATA_AND_FEATURES MODEL_DEVELOPMENT INFRASTRUCTURE_TESTING MONITORING_TESTING; do
-            echo "#### ${cat^}" >> README.md
-            echo "" >> README.md
-            echo "| Metric | Value | Notes |" >> README.md
-            echo "|--------|-------|---------|" >> README.md
-            jq -r \
-              --arg cat "$cat" \
-              '. as $root | to_entries
-               | map(select(.value.category == $cat))
-               | .[] 
-               | "| \(.key) | \(.value.value) | \(.value.message // "-") |"' \
-               metrics.json >> README.md
-            echo "" >> README.md
-          done
-
-          echo "<!-- METRICS END -->" >> README.md
-
       - uses: Silleellie/pylint-github-action@v2.1
         with:
           lint-path: training
           python-version: 3.11  
+
+      - name: Commit and push updated README
+        run: |
+          git add README.md
+          git diff --cached --quiet || git commit -m "ci: update README with test results"
+          git push

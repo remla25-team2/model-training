@@ -15,7 +15,6 @@ PYTHON_INTERPRETER = python
 .PHONY: requirements
 requirements:
 	pip install -e .
-## force reinstall of dependencies
  	pip install -r requirements.txt --force-reinstall
 	
 

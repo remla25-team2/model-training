@@ -5,7 +5,7 @@ import pandas as pd
 from tqdm import tqdm
 import typer
 
-from lib_ml.preprocessing import _clean
+from lib_ml.preprocessing import TextPreprocessor
 
 from training.config import DATA_DIR, PROCESSED_DATA_DIR
 
@@ -22,8 +22,8 @@ def preprocess(
     df = pd.read_csv(dataset_path, delimiter="\t", quoting=3)
 
     corpus = []
-    for i in tqdm(range(len(df)), desc="Cleaning text"):
-        corpus.append(_clean(df["Review"][i]))
+    preprocessor = TextPreprocessor()
+    corpus = preprocessor.process(df)
     logger.info("Preprocessing complete")
 
     logger.info(f"Saving cleaned corpus to {corpus_path}")

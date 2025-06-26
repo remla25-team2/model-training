@@ -32,25 +32,29 @@ def bow_vectorizer():
     return vectorizer
 
 
-def test_metamorphic_synonym(trained_model, bow_vectorizer): # Use fixtures
+def test_metamorphic_synonym(trained_model, bow_vectorizer):
     # Ensure necessary artifacts exist before proceeding
-    if not isinstance(trained_model, GaussianNB): # Check if fixture loaded correctly
+    if not isinstance(trained_model, GaussianNB):
         pytest.skip("Trained model not available for metamorphic test.")
-    if not hasattr(bow_vectorizer, 'transform'): # Check if fixture loaded correctly
+    if not hasattr(bow_vectorizer, 'transform'):
         pytest.skip("BoW Vectorizer not available for metamorphic test.")
 
-    try:
-        from lib_ml.preprocessing import TextPreprocessor
-    except ImportError:
-        def _clean(x): return x.lower()
-    
     original = "This place is sooooo good."
     synonym = "This place is fine."
-    preprocessor = TextPreprocessor()
-
-    # Transform using the loaded vectorizer
-    X_orig = bow_vectorizer.transform([preprocessor.process_item(original)]).toarray()
-    X_syn = bow_vectorizer.transform([preprocessor.process_item(synonym)]).toarray()
+    
+    # Use the TextPreprocessor which should handle the full pipeline
+    from lib_ml.preprocessing import TextPreprocessor
+    
+    # Load the actual preprocessor that was saved during training
+    preprocessor_path = Path("models") / "bow" / "BoW_Sentiment_Model.pkl"
+    if not preprocessor_path.exists():
+        pytest.skip("Preprocessor not found. Run the pipeline first.")
+    
+    preprocessor = TextPreprocessor.load(preprocessor_path)
+    
+    # Transform using the loaded preprocessor
+    X_orig = preprocessor.transform([original]).toarray()
+    X_syn = preprocessor.transform([synonym]).toarray()
     
     pred_orig = trained_model.predict(X_orig)[0]
     pred_syn = trained_model.predict(X_syn)[0]

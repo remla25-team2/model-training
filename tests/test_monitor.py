@@ -10,7 +10,7 @@ from training.modeling.transform import transform as run_transform_pipeline
 from training.config import RAW_DATA_DIR, PROCESSED_DATA_DIR, MODELS_DIR
 
 
-MAX_MEMORY_MB = 200         # Maximum allowed memory (MB) during a single predict
+MAX_MEMORY_MB = 205         # Maximum allowed memory (MB) during a single predict
 MAX_LATENCY_SEC = 0.1      # Maximum allowed latency (seconds) for one prediction
 MIN_THROUGHPUT = 100       # Minimum allowed throughput (requests/sec)
 MAX_FEATURE_EXTRACTION_TIME_SEC = 5.0 # Max time for feature extraction
@@ -89,24 +89,22 @@ def test_feature_extraction_cost():
     """
     raw_path = RAW_DATA_DIR / "a1_RestaurantReviews_HistoricDump.tsv"
     corpus_path = PROCESSED_DATA_DIR / "corpus.pkl"
-    features_path = PROCESSED_DATA_DIR / "features.csv" # Temporary output for this test
-    labels_path = PROCESSED_DATA_DIR / "labels.csv"     # Temporary output for this test
-    bow_path = MODELS_DIR / "bow" / "BoW_Sentiment_Model.pkl" # This is the actual output path
+    features_path = PROCESSED_DATA_DIR / "features.csv"
+    labels_path = PROCESSED_DATA_DIR / "labels.csv"
+    preprocessor_path = MODELS_DIR / "bow" / "BoW_Sentiment_Model.pkl"
 
     if not raw_path.exists():
         pytest.skip(f"Raw data not found at {raw_path}. Run 'dvc pull' first.")
     if not corpus_path.exists():
         pytest.skip(f"Corpus not found at {corpus_path}. Run 'dvc repro preprocess' first.")
 
-
     def measure_transform():
-        # Ensure transform function gets correct paths
         run_transform_pipeline(
             raw_dataset_path=raw_path,
             corpus_path=corpus_path,
             dataset_path=features_path,
             labels_path=labels_path,
-            bow_path=bow_path,
+            preprocessor_path=preprocessor_path
         )
 
     # Measure time

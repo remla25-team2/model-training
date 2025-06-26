@@ -3,6 +3,7 @@ from training.modeling.model_train import train
 from training.modeling.transform import transform
 from training.modeling.preprocess import preprocess
 from training.modeling.split import split
+from sklearn.naive_bayes import GaussianNB
 import pickle
 import logging
 import pytest
@@ -33,7 +34,7 @@ def bow_vectorizer():
 
 def test_metamorphic_synonym(trained_model, bow_vectorizer): # Use fixtures
     # Ensure necessary artifacts exist before proceeding
-    if not isinstance(trained_model, joblib.GaussianNB): # Check if fixture loaded correctly
+    if not isinstance(trained_model, GaussianNB): # Check if fixture loaded correctly
         pytest.skip("Trained model not available for metamorphic test.")
     if not hasattr(bow_vectorizer, 'transform'): # Check if fixture loaded correctly
         pytest.skip("BoW Vectorizer not available for metamorphic test.")

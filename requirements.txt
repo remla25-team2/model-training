@@ -20,4 +20,4 @@ scikit-learn~=1.6.1
 joblib~=1.4.2
 pandas~=2.2.3
 numpy~=2.2.5
-lib-ml @ git+https://github.com/remla25-team2/lib-ml@v1.0.0
+lib-ml @ git+https://github.com/remla25-team2/lib-ml@v1.0.1

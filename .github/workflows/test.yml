@@ -1,9 +1,12 @@
 name: Model training tests
 
 on:
-  pull_request:
+  workflow_dispatch:
+  push:
     branches:
-      - main
+      - '**'
+    paths-ignore:
+      - README.md
 
 env:
   PYTHON_VERSION: "3.10"

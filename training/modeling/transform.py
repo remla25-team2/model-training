@@ -1,11 +1,9 @@
 from pathlib import Path
-import pickle
 
 from loguru import logger
 import pandas as pd
-from sklearn.feature_extraction.text import CountVectorizer
 import typer
-
+from lib_ml.preprocessing import TextPreprocessor
 from training.config import DATA_DIR, MODELS_DIR, PROCESSED_DATA_DIR
 
 app = typer.Typer()
@@ -23,21 +21,25 @@ def transform(
     corpus = pd.read_pickle(corpus_path)
 
     logger.info("Creating bag-of-words features...")
-    cv = CountVectorizer(max_features=1420)
-    X = cv.fit_transform(corpus).toarray()
+    tp = TextPreprocessor(max_features=1420)
+    X = tp.fit(corpus).transform(corpus)
 
     logger.info(f"Saving features to {dataset_path}")
-    feature_names = cv.get_feature_names_out()
-    pd.DataFrame(X, columns=feature_names).to_csv(dataset_path, index=False)
-
+    # pylint: disable=W0212
+    feature_names = tp._vectorizer.get_feature_names_out()
+    pd.DataFrame(X.toarray(), columns=feature_names).to_csv(dataset_path, index=False)
+    # pylint: enable=W0212
+    logger.info(f"Saving labels to {labels_path}")
     # Labels: assumed to be in original corpus file name
     df = pd.read_csv(raw_dataset_path, delimiter="\t", quoting=3)
     y = df.iloc[:, -1].values
     pd.Series(y).to_csv(labels_path, index=False)
 
-    bow_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(bow_path, "wb") as f:
-        pickle.dump(cv, f)
+    tp.save(bow_path)
+    logger.info(f"Saved TextPreprocessor (BoW model) to {bow_path}")
+    # bow_path.parent.mkdir(parents=True, exist_ok=True)
+    # with open(bow_path, "wb") as f:
+    #     pickle.dump(tp, f)
 
 
 if __name__ == "__main__":

@@ -43,8 +43,6 @@ def train(
     logger.info(f"Model saved to {model_path}")
 
     y_pred = clf.predict(X_test)
-    y_proba = clf.predict_proba(X_test)
-    
     acc = accuracy_score(y_test, y_pred)
     cm = confusion_matrix(y_test, y_pred)
     precision = precision_score(y_test, y_pred, average="weighted")

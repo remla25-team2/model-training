@@ -30,12 +30,10 @@ def preprocess(
     corpus_path.parent.mkdir(parents=True, exist_ok=True)
     # Save the sparse matrix as pickle
     pd.Series([corpus_matrix]).to_pickle(corpus_path)
-    
     # Save the fitted preprocessor
     preprocessor_path.parent.mkdir(parents=True, exist_ok=True)
     preprocessor.save(preprocessor_path)
     logger.info(f"Saved fitted preprocessor to {preprocessor_path}")
-    
 
 
 if __name__ == "__main__":

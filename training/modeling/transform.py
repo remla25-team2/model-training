@@ -30,7 +30,6 @@ def transform(
     feature_names = tp._vectorizer.get_feature_names_out()
     pd.DataFrame(corpus_matrix.toarray(), columns=feature_names).to_csv(dataset_path, index=False)
     # pylint: enable=W0212
-    
     logger.info(f"Saving labels to {labels_path}")
     labels_path.parent.mkdir(parents=True, exist_ok=True)
     df = pd.read_csv(raw_dataset_path, delimiter="\t", quoting=3)

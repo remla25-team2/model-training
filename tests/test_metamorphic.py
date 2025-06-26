@@ -40,16 +40,17 @@ def test_metamorphic_synonym(trained_model, bow_vectorizer): # Use fixtures
         pytest.skip("BoW Vectorizer not available for metamorphic test.")
 
     try:
-        from lib_ml.preprocessing import _clean
+        from lib_ml.preprocessing import TextPreprocessor
     except ImportError:
         def _clean(x): return x.lower()
     
-    original = "This place is good."
+    original = "This place is sooooo good."
     synonym = "This place is fine."
+    preprocessor = TextPreprocessor()
 
     # Transform using the loaded vectorizer
-    X_orig = bow_vectorizer.transform([_clean(original)]).toarray()
-    X_syn = bow_vectorizer.transform([_clean(synonym)]).toarray()
+    X_orig = bow_vectorizer.transform([preprocessor.process_item(original)]).toarray()
+    X_syn = bow_vectorizer.transform([preprocessor.process_item(synonym)]).toarray()
     
     pred_orig = trained_model.predict(X_orig)[0]
     pred_syn = trained_model.predict(X_syn)[0]

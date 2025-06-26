@@ -1,32 +1,32 @@
 schema: '2.0'
 stages:
   preprocess:
-    cmd: python training/modeling/preprocess.py
+    cmd: PYTHONPATH=. python training/modeling/preprocess.py
     deps:
     - path: data/raw/a1_RestaurantReviews_HistoricDump.tsv
       hash: md5
-      md5: 30c12a08032bd9157e54bf37897c42b0
-      size: 55585
+      md5: f301a6d162636b3c5e31b168ac0052aa
+      size: 54685
     - path: training/modeling/preprocess.py
       hash: md5
-      md5: d5bf0d0f7ee30529f4562d8a9201d27d
-      size: 873
+      md5: 2de06b9ce4ecaf8cda8ab0101954c374
+      size: 851
     outs:
     - path: data/processed/corpus.pkl
       hash: md5
-      md5: 14751c4edd08b9eeead9db96b7ec45a6
-      size: 32212
+      md5: e1fd93f08eee8128c79e299cab159802
+      size: 32211
   transform:
-    cmd: python training/modeling/transform.py
+    cmd: PYTHONPATH=. python training/modeling/transform.py
     deps:
     - path: data/processed/corpus.pkl
       hash: md5
-      md5: 14751c4edd08b9eeead9db96b7ec45a6
-      size: 32212
+      md5: e1fd93f08eee8128c79e299cab159802
+      size: 32211
     - path: data/raw/a1_RestaurantReviews_HistoricDump.tsv
       hash: md5
-      md5: 30c12a08032bd9157e54bf37897c42b0
-      size: 55585
+      md5: f301a6d162636b3c5e31b168ac0052aa
+      size: 54685
     - path: training/modeling/transform.py
       hash: md5
       md5: 93325ec27ed0172be762d8bcd66baa7e
@@ -34,23 +34,23 @@ stages:
     outs:
     - path: data/processed/features.csv
       hash: md5
-      md5: a07ba62500ccb3d60daff3cd44d652a7
-      size: 2565013
+      md5: eecb8c0816ac4995756ea8c2ead67af2
+      size: 2565028
     - path: data/processed/labels.csv
       hash: md5
       md5: c9e14684e08e876427e05ae7b274695e
       size: 1802
     - path: models/bow/BoW_Sentiment_Model.pkl
       hash: md5
-      md5: 3c2954b36586299c7831d54e1e8ee5c8
-      size: 49874
+      md5: 0838d13083dcfd458f52cb1e4da223e3
+      size: 49889
   split:
-    cmd: python training/modeling/split.py
+    cmd: PYTHONPATH=.  python training/modeling/split.py
     deps:
     - path: data/processed/features.csv
       hash: md5
-      md5: a07ba62500ccb3d60daff3cd44d652a7
-      size: 2565013
+      md5: eecb8c0816ac4995756ea8c2ead67af2
+      size: 2565028
     - path: data/processed/labels.csv
       hash: md5
       md5: c9e14684e08e876427e05ae7b274695e
@@ -62,15 +62,15 @@ stages:
     outs:
     - path: data/processed/splits
       hash: md5
-      md5: 0510ca654418ef6fede5d964ba2c6943.dir
+      md5: a4c1f8cb09900e4c42681ec67320f415.dir
       size: 2569784
       nfiles: 4
   train:
-    cmd: python training/modeling/model_train.py
+    cmd: PYTHONPATH=. python training/modeling/model_train.py
     deps:
     - path: data/processed/splits
       hash: md5
-      md5: 0510ca654418ef6fede5d964ba2c6943.dir
+      md5: a4c1f8cb09900e4c42681ec67320f415.dir
       size: 2569784
       nfiles: 4
     - path: training/modeling/model_train.py
@@ -80,9 +80,9 @@ stages:
     outs:
     - path: models/SentimentModel.pkl
       hash: md5
-      md5: 98c8089e7cf81f1736a1271e64632ee6
+      md5: 3854b94a0da5991639872a952f22bb0d
       size: 46215
     - path: models/metrics.json
       hash: md5
-      md5: dabd468b1aa95f811f66b1de267522c4
-      size: 244
+      md5: 7bc5a572e5f6fa41121bfac5360f8400
+      size: 245

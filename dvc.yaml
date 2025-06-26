@@ -6,6 +6,7 @@ stages:
     - training/modeling/preprocess.py
     outs:
     - data/processed/corpus.pkl
+    - models/bow/BoW_Sentiment_Model.pkl
   transform:
     cmd: python training/modeling/transform.py
     deps:
@@ -13,7 +14,6 @@ stages:
     - data/processed/corpus.pkl
     - training/modeling/transform.py
     outs:
-    - models/bow/BoW_Sentiment_Model.pkl
     - data/processed/features.csv
     - data/processed/labels.csv
   split:

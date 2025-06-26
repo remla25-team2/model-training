@@ -54,3 +54,30 @@ def test_dvc_pipeline_repro(prepare_raw_data_for_pipeline_test):
     assert "precision" in metrics
     assert "recall" in metrics
     assert "confusion_matrix" in metrics
+
+def test_ml_test_score_adequacy():
+    """
+    Checks for the presence of tests covering all ML Test Score categories.
+    This serves as a basic measure of test adequacy.
+    """
+    test_categories = {
+        "Feature & Data Integrity": "test_data_integrity.py",
+        "Model Development": "test_model_train.py",
+        "ML Infrastructure": "test_pipeline.py",
+        "Monitoring": "test_monitor.py",
+        "Mutamorphic testing": "test_metamorphic.py",
+    }
+
+    all_categories_covered = True
+    missing_categories = []
+
+    for category, test_file in test_categories.items():
+        if not (PROJECT_ROOT / "tests" / test_file).exists():
+            all_categories_covered = False
+            missing_categories.append(category)
+
+    if all_categories_covered:
+        print("\nML Test Score Adequacy: All categories covered. Excellent!")
+    else:
+        pytest.fail(f"ML Test Score Adequacy: Missing tests for categories: {', '.join(missing_categories)}")
+
